@@ -1,0 +1,33 @@
+{% extends "encyclopedia/layout.html" %}
+{% load static %}
+{% block title %}Edit Page{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encyclopedia</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+
+{% block head %}
+    {{ block.super }}
+    <meta charset="utf-8">
+{% endblock %}
+
+{% block body %}
+<div class="centered-content4">
+<h2>Edit Page: {{ title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="content">Content:</label>
+        <textarea class="form-control" id="content" name="content" rows="10">{{ content }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+</div>
+{% endblock %}
+</html>

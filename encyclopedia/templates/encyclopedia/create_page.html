@@ -1,0 +1,39 @@
+{% extends 'encyclopedia/layout.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encyclopedia</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+{% block title %}Create New Page{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <meta charset="utf-8">
+{% endblock %}
+
+{% block body %}
+<div class="centered-content">
+    <h1>Create New Page</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% if error_message %}
+            <p class="text-danger">{{ error_message }}</p>
+        {% endif %}
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" name="title">
+        </div>
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="10"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}
+</html>

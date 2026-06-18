@@ -1,0 +1,23 @@
+{% extends "encyclopedia/layout.html" %}
+{% load static %}
+{% block title %}Delete Page{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encyclopedia</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+{% block body %}
+<div class="centered-content5">
+    <h2>Delete Page</h2>
+    <p>Are you sure you want to delete the page "{{ title }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'info' title=title %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}
+</html>

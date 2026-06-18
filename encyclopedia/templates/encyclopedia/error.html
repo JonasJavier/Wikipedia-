@@ -1,0 +1,27 @@
+{% extends "encyclopedia/layout.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encyclopedia</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+{% block head %}
+    {{ block.super }}
+    <meta charset="utf-8">
+{% endblock %}
+<div class="centered-content7">
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+    <h1>Error</h1>
+
+    <h2>{{error_message}}</h2>
+
+{% endblock %}
+</html>
