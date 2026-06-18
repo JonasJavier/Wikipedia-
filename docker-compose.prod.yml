@@ -1,0 +1,73 @@
+# Wikiverse — production-like stack.
+# nginx serves the built SPA and reverse-proxies /api + /admin to gunicorn.
+#
+#   docker compose -f docker-compose.prod.yml up --build -d
+#
+# App: http://localhost   ·   API: http://localhost/api/docs/
+#
+# Set a strong SECRET_KEY (and ideally ALLOWED_HOSTS) in your .env first.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-wikiverse}
+      POSTGRES_USER: ${POSTGRES_USER:-wikiverse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wikiverse}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-wikiverse}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DEBUG: "false"
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in your .env}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-*}
+      DATABASE_URL: postgres://${POSTGRES_USER:-wikiverse}:${POSTGRES_PASSWORD:-wikiverse}@db:5432/${POSTGRES_DB:-wikiverse}
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_SEED: "${DJANGO_SEED:-true}"
+      DJANGO_COLLECTSTATIC: "true"
+      # This demo runs over plain HTTP behind nginx; enable when you add TLS.
+      SECURE_SSL_REDIRECT: "false"
+    volumes:
+      - media:/app/media
+      - static:/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      target: prod
+      args:
+        VITE_API_URL: /api
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  media:
+  static:
