@@ -2,13 +2,18 @@
 set -e
 
 echo "⏳ Waiting for PostgreSQL to accept connections..."
-until python - <<'PY' 2>/dev/null
+until python - <<'PY'
 import os
 from urllib.parse import urlparse
 
 import psycopg
 
-url = urlparse(os.environ["DATABASE_URL"])
+database_url = os.environ.get("DATABASE_URL", "")
+print(f"DATABASE_URL starts with: {database_url[:25]}...")
+
+url = urlparse(database_url)
+print(f"Parsed DB host={url.hostname}, port={url.port or 5432}, db={url.path.lstrip('/')}")
+
 psycopg.connect(
     host=url.hostname,
     port=url.port or 5432,
@@ -18,6 +23,7 @@ psycopg.connect(
 ).close()
 PY
 do
+  echo "PostgreSQL is not ready yet. Retrying..."
   sleep 1
 done
 echo "✅ Database is ready."
@@ -35,4 +41,5 @@ if [ "${DJANGO_SEED:-false}" = "true" ]; then
   python manage.py seed
 fi
 
+echo "🚀 Starting application on PORT=${PORT:-8000}..."
 exec "$@"
