@@ -7,12 +7,12 @@ server {
 
     client_max_body_size 20m;
 
-    # Django API
     location /api/ {
-        proxy_pass ${BACKEND_INTERNAL_URL}/api/;
+        proxy_pass https://backend-production-25f12.up.railway.app/api/;
         proxy_http_version 1.1;
+        proxy_ssl_server_name on;
 
-        proxy_set_header Host $host;
+        proxy_set_header Host backend-production-25f12.up.railway.app;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -20,12 +20,12 @@ server {
         proxy_redirect off;
     }
 
-    # Django admin
     location /admin/ {
-        proxy_pass ${BACKEND_INTERNAL_URL}/admin/;
+        proxy_pass https://backend-production-25f12.up.railway.app/admin/;
         proxy_http_version 1.1;
+        proxy_ssl_server_name on;
 
-        proxy_set_header Host $host;
+        proxy_set_header Host backend-production-25f12.up.railway.app;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -33,36 +33,34 @@ server {
         proxy_redirect off;
     }
 
-    # Django static files, useful for admin CSS/JS
     location /static/ {
-        proxy_pass ${BACKEND_INTERNAL_URL}/static/;
+        proxy_pass https://backend-production-25f12.up.railway.app/static/;
         proxy_http_version 1.1;
+        proxy_ssl_server_name on;
 
-        proxy_set_header Host $host;
+        proxy_set_header Host backend-production-25f12.up.railway.app;
         proxy_set_header X-Forwarded-Proto $scheme;
 
         proxy_redirect off;
     }
 
-    # Django media files, if you later upload images/files
     location /media/ {
-        proxy_pass ${BACKEND_INTERNAL_URL}/media/;
+        proxy_pass https://backend-production-25f12.up.railway.app/media/;
         proxy_http_version 1.1;
+        proxy_ssl_server_name on;
 
-        proxy_set_header Host $host;
+        proxy_set_header Host backend-production-25f12.up.railway.app;
         proxy_set_header X-Forwarded-Proto $scheme;
 
         proxy_redirect off;
     }
 
-    # Vite static assets
     location /assets/ {
         try_files $uri =404;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
 
-    # React Router / SPA fallback
     location / {
         try_files $uri $uri/ /index.html;
     }
