@@ -42,11 +42,11 @@ RUN npm run build
 
 # --------------------------------------------------------------------------- #
 # Production target
-# Used by Railway and docker-compose.prod.yml
+# Used by Railway
 # --------------------------------------------------------------------------- #
 FROM nginx:1.27-alpine AS prod
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
